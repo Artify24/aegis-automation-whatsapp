@@ -60,6 +60,9 @@ if STATIC_DIR.exists():
 # ───────────────────────────────────────────── Dashboard & Health ─────────────
 
 @app.get("/")
+@app.get("/api")
+@app.get("/api/")
+@app.get("/api/index.py")
 def dashboard():
     """Serve the AegisBot web dashboard."""
     index_file = STATIC_DIR / "index.html"
