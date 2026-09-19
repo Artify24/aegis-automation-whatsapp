@@ -117,56 +117,6 @@ def health():
     return JSONResponse(info, status_code=200 if info["status"] == "ok" else 500)
 
 
-# ───────────────────────────────────────────── Twilio Voice/SMS Forwarding ────
-LAST_TWILIO_RECORDING = ""
-
-@app.get("/twilio/voice")
-@app.post("/twilio/voice")
-def twilio_voice():
-    """Answer immediately and record Meta's automated verification robot code."""
-    xml = (
-        '<?xml version="1.0" encoding="UTF-8"?>'
-        '<Response>'
-        '<Pause length="1"/>'
-        '<Record playBeep="false" timeout="20" maxLength="45" recordingStatusCallback="https://aegis-automation-whatsapp.vercel.app/twilio/recording"/>'
-        '</Response>'
-    )
-    return Response(content=xml, media_type="application/xml")
-
-
-@app.post("/twilio/recording")
-async def twilio_recording(request: Request):
-    """Callback when Twilio finishes recording the call."""
-    global LAST_TWILIO_RECORDING
-    try:
-        form = await request.form()
-        LAST_TWILIO_RECORDING = form.get("RecordingUrl", "")
-        logger.info("Twilio voice recording ready: %s", LAST_TWILIO_RECORDING)
-    except Exception:
-        pass
-    return Response(content='<?xml version="1.0" encoding="UTF-8"?><Response></Response>', media_type="application/xml")
-
-
-@app.get("/twilio/latest")
-def twilio_latest():
-    """Retrieve the latest Twilio audio recording URL."""
-    return JSONResponse({"recording_url": LAST_TWILIO_RECORDING})
-
-
-@app.get("/twilio/sms")
-@app.post("/twilio/sms")
-async def twilio_sms(request: Request):
-    """Capture incoming Twilio SMS messages."""
-    try:
-        form = await request.form()
-        body = form.get("Body", "")
-        sender = form.get("From", "")
-        logger.info("Twilio SMS from %s: %s", sender, body)
-    except Exception:
-        pass
-    return Response(content='<?xml version="1.0" encoding="UTF-8"?><Response></Response>', media_type="application/xml")
-
-
 # ───────────────────────────────────────────── WhatsApp webhook ───────────────
 
 @app.get("/webhook/whatsapp")
