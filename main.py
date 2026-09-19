@@ -51,16 +51,17 @@ logger = logging.getLogger("aegisbot.main")
 app = FastAPI(title="AegisBot WhatsApp", version="1.0.0")
 START_TIME = time.time()
 
-@app.exception_handler(404)
-async def custom_404_handler(request: Request, exc):
-    return JSONResponse({
-        "detail": "Custom Not Found",
-        "url": str(request.url),
-        "path": request.url.path,
-        "scope_path": request.scope.get("path"),
-        "scope_raw_path": request.scope.get("raw_path", b"").decode("latin1", "ignore"),
-        "headers": dict(request.headers),
-    }, status_code=404)
+@app.middleware("http")
+async def vercel_path_rewrite_middleware(request: Request, call_next):
+    """Restore original requested path from Vercel rewrite query parameter."""
+    if "__path__" in request.query_params:
+        target = "/" + request.query_params["__path__"].lstrip("/")
+        request.scope["path"] = target
+        request.scope["raw_path"] = target.encode("utf-8")
+    elif request.scope.get("path") in ("/api/index.py", "/api", "/api/"):
+        request.scope["path"] = "/"
+        request.scope["raw_path"] = b"/"
+    return await call_next(request)
 
 # Mount static directory if present
 STATIC_DIR = Path(__file__).parent / "static"
