@@ -17,3 +17,4 @@ data/
 # editor / os
 .DS_Store
 Thumbs.db
+cloudflared.exe
