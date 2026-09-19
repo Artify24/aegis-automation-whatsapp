@@ -51,6 +51,17 @@ logger = logging.getLogger("aegisbot.main")
 app = FastAPI(title="AegisBot WhatsApp", version="1.0.0")
 START_TIME = time.time()
 
+@app.exception_handler(404)
+async def custom_404_handler(request: Request, exc):
+    return JSONResponse({
+        "detail": "Custom Not Found",
+        "url": str(request.url),
+        "path": request.url.path,
+        "scope_path": request.scope.get("path"),
+        "scope_raw_path": request.scope.get("raw_path", b"").decode("latin1", "ignore"),
+        "headers": dict(request.headers),
+    }, status_code=404)
+
 # Mount static directory if present
 STATIC_DIR = Path(__file__).parent / "static"
 if STATIC_DIR.exists():
