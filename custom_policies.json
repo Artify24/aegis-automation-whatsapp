@@ -1,0 +1,82 @@
+{
+  "returns": {
+    "id": "returns",
+    "title": "Return & Replacement Policy",
+    "category": "logistics",
+    "summary": "7-day replacement guarantee for manufacturing defects or transit damage in original packaging.",
+    "return_window_days": 7,
+    "requires_original_packaging": true,
+    "exclusions": [
+      "misuse",
+      "normal wear",
+      "unauthorized modification"
+    ],
+    "active": true
+  },
+  "cancellations": {
+    "id": "cancellations",
+    "title": "Order Cancellation & 100% Refund Policy",
+    "category": "orders",
+    "summary": "100% full refund if cancelled within 24 hours of placement. 8% restocking fee thereafter prior to dispatch.",
+    "full_refund_window_hours": 24,
+    "late_cancellation_fee_pct": 8,
+    "refund_reversal_days": "3-5 business days",
+    "active": true
+  },
+  "bespoke": {
+    "id": "bespoke",
+    "title": "Bespoke & Custom Workstation Fabrication",
+    "category": "manufacturing",
+    "summary": "Custom orders require 50% advance deposit. Cancellable within 24 hours only; non-refundable once cutting begins.",
+    "advance_deposit_pct": 50,
+    "cancellation_window_hours": 24,
+    "active": true
+  },
+  "shipping": {
+    "id": "shipping",
+    "title": "Delivery & Free Onsite Installation Policy",
+    "category": "logistics",
+    "summary": "Free delivery in Bangalore on orders > ₹10,000. Flat ₹999 for orders < ₹10,000. Free onsite ergonomic assembly.",
+    "free_shipping_threshold": 10000.0,
+    "standard_shipping_fee": 999.0,
+    "lead_time_catalog_days": "3-5 days",
+    "free_assembly": true,
+    "active": true
+  },
+  "privacy": {
+    "id": "privacy",
+    "title": "Privacy, Data Retention & DPDP / GDPR Policy",
+    "category": "compliance",
+    "summary": "Zero 3rd-party data selling, PII phone masking in operational logs, and customer right-to-erasure supported.",
+    "dpdp_compliant": true,
+    "gdpr_compliant": true,
+    "mask_pii_in_logs": true,
+    "allow_data_erasure": true,
+    "active": true
+  },
+  "bulk_discount": {
+    "id": "bulk_discount",
+    "title": "Corporate Bulk Discount & Credit Terms",
+    "category": "commercial",
+    "summary": "5% discount for 5-15 units, 10% discount for 16-50 units. Net-30 credit terms for GSTIN-verified corporate accounts.",
+    "tiers": [
+      {
+        "min_units": 5,
+        "max_units": 15,
+        "discount_pct": 5
+      },
+      {
+        "min_units": 16,
+        "max_units": 50,
+        "discount_pct": 10
+      },
+      {
+        "min_units": 51,
+        "max_units": 999999,
+        "discount_pct": 15
+      }
+    ],
+    "credit_terms_available": "Net-30 with GSTIN verification",
+    "active": true
+  }
+}

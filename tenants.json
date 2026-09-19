@@ -1,0 +1,41 @@
+{
+  "aegis_workspace": {
+    "id": "aegis_workspace",
+    "name": "Aegis Workspace Solutions",
+    "industry": "Commercial Furniture & Ergonomics",
+    "currency": "INR",
+    "currency_symbol": "Rs",
+    "phone": "+91 80 4123 9900",
+    "address": "100 Feet Road, Indiranagar, Bangalore (Opp. Metro Pillar 84)",
+    "hours": "Mon-Sat: 9:30 AM - 8:00 PM | Sun: 10:30 AM - 6:00 PM",
+    "greeting": "Hi! 👋 Welcome to *Aegis Workspace Solutions*! I'm your 24/7 instant assistant. Ask me about products, pricing, store hours, or get a custom corporate quote! 😊",
+    "catalog_doc": "catalog_pricing.md",
+    "active": true
+  },
+  "apex_realestate": {
+    "id": "apex_realestate",
+    "name": "Apex Prime Properties",
+    "industry": "Real Estate & Commercial Leasing",
+    "currency": "INR",
+    "currency_symbol": "Rs",
+    "phone": "+91 80 5566 7788",
+    "address": "MG Road, Bangalore",
+    "hours": "Daily: 9:00 AM - 7:00 PM",
+    "greeting": "Welcome to *Apex Prime Properties*! 🏢 Explore luxury 2/3 BHK apartments, commercial tech parks, and prime plots in Bangalore. How can I help you find your dream space today?",
+    "catalog_doc": "company_info.json",
+    "active": false
+  },
+  "dr_smile_dental": {
+    "id": "dr_smile_dental",
+    "name": "Dr. Smile Dental & Orthodontics",
+    "industry": "Healthcare & Dental Care",
+    "currency": "INR",
+    "currency_symbol": "Rs",
+    "phone": "+91 80 3344 1122",
+    "address": "Koramangala 4th Block, Bangalore",
+    "hours": "Mon-Sat: 10:00 AM - 8:30 PM | Sun: By appointment",
+    "greeting": "Hello! 👋 Welcome to *Dr. Smile Dental Clinic*. How can we help you today? Inquire about dental implants, aligners, root canals, or book an instant consultation! 🦷",
+    "catalog_doc": "faq.md",
+    "active": false
+  }
+}

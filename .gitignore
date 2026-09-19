@@ -1,0 +1,19 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# runtime data
+data/
+*.db
+*.sqlite
+
+# streamlit
+.streamlit/
+
+# editor / os
+.DS_Store
+Thumbs.db
