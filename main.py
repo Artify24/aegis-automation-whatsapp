@@ -117,6 +117,29 @@ def health():
     return JSONResponse(info, status_code=200 if info["status"] == "ok" else 500)
 
 
+# ───────────────────────────────────────────── Twilio Voice/SMS Forwarding ────
+@app.get("/twilio/voice")
+@app.post("/twilio/voice")
+def twilio_voice():
+    """Forward incoming Twilio voice call to customer's personal phone."""
+    xml = '<?xml version="1.0" encoding="UTF-8"?><Response><Dial>+918779121940</Dial></Response>'
+    return Response(content=xml, media_type="application/xml")
+
+
+@app.get("/twilio/sms")
+@app.post("/twilio/sms")
+async def twilio_sms(request: Request):
+    """Capture incoming Twilio SMS messages."""
+    try:
+        form = await request.form()
+        body = form.get("Body", "")
+        sender = form.get("From", "")
+        logger.info("Twilio SMS from %s: %s", sender, body)
+    except Exception:
+        pass
+    return Response(content='<?xml version="1.0" encoding="UTF-8"?><Response></Response>', media_type="application/xml")
+
+
 # ───────────────────────────────────────────── WhatsApp webhook ───────────────
 
 @app.get("/webhook/whatsapp")
