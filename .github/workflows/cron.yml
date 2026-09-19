@@ -23,8 +23,8 @@ jobs:
             URL="${{ secrets.VERCEL_APP_URL }}"
           fi
           if [ -z "$URL" ]; then
-            # Default placeholder if secret not set yet
-            URL="https://aegis-automation-products.vercel.app"
+            # Default fallback to the deployed Vercel domain
+            URL="https://aegis-automation-whatsapp.vercel.app"
           fi
           # Strip trailing slash if present
           URL="${URL%/}"
