@@ -1,9 +1,15 @@
-"""Vercel serverless entry point for AegisBot."""
+"""Vercel serverless entry point for AegisBot.
+
+Re-exports the FastAPI app from main.py, ensuring:
+1. The project root is in sys.path.
+2. The original requested path captured in __path__ query param is restored into ASGI scope
+   so FastAPI matches /health, /webhook/whatsapp, /api/leads, etc. cleanly.
+"""
 from __future__ import annotations
 
-import json
 import os
 import sys
+import urllib.parse
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -14,33 +20,23 @@ from main import app as fastapi_app  # noqa: E402
 
 
 async def app(scope, receive, send):
+    """ASGI wrapper restoring original requested path from Vercel rewrite parameter."""
     if scope.get("type") == "http":
-        raw_headers = dict(scope.get("headers", []))
-        h_str = {k.decode("latin1", "ignore").lower(): v.decode("latin1", "ignore") for k, v in raw_headers.items()}
-        
-        # Check all possible proxy headers from Vercel
-        target_path = None
-        for key in ("x-forwarded-uri", "x-matched-path", "x-invoke-path", "x-vercel-matched-path", "x-real-uri", "x-original-url"):
-            if key in h_str:
-                target_path = h_str[key].split("?")[0]
-                break
-        
-        if target_path:
-            scope["path"] = target_path
-            scope["raw_path"] = target_path.encode("utf-8")
-        elif scope.get("path") in ("/api/index.py", "/api", "/api/"):
-            scope["path"] = "/"
-            scope["raw_path"] = b"/"
+        query_bytes = scope.get("query_string", b"")
+        if b"__path__=" in query_bytes:
+            try:
+                parsed = urllib.parse.parse_qs(query_bytes.decode("utf-8", "ignore"))
+                if "__path__" in parsed and parsed["__path__"]:
+                    raw_target = parsed["__path__"][0]
+                    # Normalize leading slashes
+                    target_path = "/" + raw_target.lstrip("/")
+                    scope["path"] = target_path
+                    scope["raw_path"] = target_path.encode("utf-8")
 
-        async def custom_send(message):
-            if message.get("type") == "http.response.start":
-                msg_headers = list(message.get("headers", []))
-                # Inject debug header so we can inspect Vercel's headers
-                msg_headers.append((b"x-debug-found-path", str(target_path).encode("utf-8")))
-                msg_headers.append((b"x-debug-headers-keys", ",".join(h_str.keys()).encode("utf-8")))
-                message["headers"] = msg_headers
-            await send(message)
+                    # Remove __path__ from query string so endpoint params are untouched
+                    remaining = {k: v for k, v in parsed.items() if k != "__path__"}
+                    scope["query_string"] = urllib.parse.urlencode(remaining, doseq=True).encode("utf-8")
+            except Exception:
+                pass
 
-        await fastapi_app(scope, receive, custom_send)
-    else:
-        await fastapi_app(scope, receive, send)
+    await fastapi_app(scope, receive, send)
