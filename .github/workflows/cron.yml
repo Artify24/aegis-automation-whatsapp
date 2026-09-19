@@ -1,0 +1,65 @@
+name: AegisBot 15-Minute Background Automation
+
+on:
+  schedule:
+    # Runs every 15 minutes, 24/7 for free via GitHub Actions
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Vercel App URL (e.g. https://your-app.vercel.app)'
+        required: false
+        default: ''
+
+jobs:
+  run-automations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine Target Vercel URL
+        id: set_url
+        run: |
+          URL="${{ inputs.target_url }}"
+          if [ -z "$URL" ]; then
+            URL="${{ secrets.VERCEL_APP_URL }}"
+          fi
+          if [ -z "$URL" ]; then
+            # Default placeholder if secret not set yet
+            URL="https://aegis-automation-products.vercel.app"
+          fi
+          # Strip trailing slash if present
+          URL="${URL%/}"
+          echo "target_url=$URL" >> $GITHUB_OUTPUT
+          echo "Target URL: $URL"
+
+      - name: 1. Trigger Abandoned Lead Follow-up Nudges
+        run: |
+          URL="${{ steps.set_url.outputs.target_url }}"
+          echo "Triggering Follow-up at $URL/api/campaigns/followup..."
+          curl -s -X POST "$URL/api/campaigns/followup" \
+            -H "Content-Type: application/json" \
+            -d '{}' || true
+
+      - name: 2. Trigger Multi-Stage WhatsApp Drip Sequence
+        run: |
+          URL="${{ steps.set_url.outputs.target_url }}"
+          echo "Triggering Drip Engine at $URL/api/drip/trigger..."
+          curl -s -X POST "$URL/api/drip/trigger" \
+            -H "Content-Type: application/json" \
+            -d '{}' || true
+
+      - name: 3. Trigger Proactive Appointment Reminders
+        run: |
+          URL="${{ steps.set_url.outputs.target_url }}"
+          echo "Triggering Appointment Reminders at $URL/api/campaigns/reminders..."
+          curl -s -X POST "$URL/api/campaigns/reminders" \
+            -H "Content-Type: application/json" \
+            -d '{"hours_ahead": 24}' || true
+
+      - name: 4. Trigger Customer Win-Back & Loyalty Engine
+        run: |
+          URL="${{ steps.set_url.outputs.target_url }}"
+          echo "Triggering Win-Back Campaign at $URL/api/campaigns/winback..."
+          curl -s -X POST "$URL/api/campaigns/winback" \
+            -H "Content-Type: application/json" \
+            -d '{"days_inactive": 14}' || true
+
